@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  db:
+    build: ./requirements/mariadb
+    container_name: db
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - myNetwork
+  wordpress:
+    depends_on:
+      - db
+    build: ./requirements/wordpress
+    container_name: wp
+    restart: unless-stopped
+    volumes:
+      - WordPress:/var/www/html/wordpress
+    networks:
+      - myNetwork
+    init : true
+  websrv:
+    depends_on:
+      - wordpress
+    build: ./requirements/nginx
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+     - "443:443"
+    volumes:
+      - WordPress:/var/www/html/wordpress
+    networks:
+      - myNetwork
+
+volumes:
+  WordPress:
+
+networks:
+  myNetwork:
+    driver: bridge
