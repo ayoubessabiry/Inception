@@ -19,6 +19,8 @@ services:
       - WordPress:/var/www/html/wordpress
     networks:
       - myNetwork
+    env_file:
+      - .env
     init : true
   websrv:
     depends_on:
@@ -26,6 +28,8 @@ services:
     build: ./requirements/nginx
     container_name: nginx
     restart: unless-stopped
+    env_file:
+      - .env
     ports:
      - "443:443"
     volumes:
