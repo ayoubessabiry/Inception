@@ -1,50 +1,54 @@
 version: '3'
 
 services:
-  db:
+  mariadb:
     build:
       context: ./requirements/mariadb
       args:
         - MYSQL_USER
         - MYSQL_ROOT_PASSWORD
-    container_name: db
-    restart: unless-stopped
-    # env_file:
-    #   - .env
+    container_name: mariadb
+    restart: always
     networks:
-      - myNetwork
+      - docker-network
+    volumes:
+      - mariadb:/home/aessabir/data
   wordpress:
     depends_on:
-      - db
+      - mariadb
     build: ./requirements/wordpress
-    container_name: wp
-    restart: unless-stopped
+    container_name: wordpress
+    restart: always
     volumes:
-      - WordPress:/var/www/html/wordpress
+      - wordpress:/var/www/html/wordpress
     networks:
-      - myNetwork
+      - docker-network
     env_file:
       - .env
     init : true
-  websrv:
+  nginx:
     depends_on:
       - wordpress
     build: ./requirements/nginx
     container_name: nginx
-    restart: unless-stopped
+    restart: always
     env_file:
       - .env
     ports:
      - "443:443"
     volumes:
-      - WordPress:/var/www/html/wordpress
+      - wordpress:/var/www/html/wordpress
     networks:
-      - myNetwork
+      - docker-network
 
 volumes:
-  WordPress:
-  WordPressDB:
+  wordpress:
+  mariadb:
+    driver_opts:
+      type: none
+      device: /home/aessabir/data
+      o : bind
 
 networks:
-  myNetwork:
+  docker-network:
     driver: bridge
