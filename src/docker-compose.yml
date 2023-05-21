@@ -12,7 +12,7 @@ services:
     networks:
       - docker-network
     volumes:
-      - mariadb:/home/aessabir/data
+      - mariadb:/var/lib/mysql
   wordpress:
     depends_on:
       - mariadb
@@ -43,10 +43,14 @@ services:
 
 volumes:
   wordpress:
+    driver_opts:
+      type: bind
+      device: /home/aessabir/data/wordpress
+      o : bind
   mariadb:
     driver_opts:
-      type: none
-      device: /home/aessabir/data
+      type: bind
+      device: /home/aessabir/data/database
       o : bind
 
 networks:

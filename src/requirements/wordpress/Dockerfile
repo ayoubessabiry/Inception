@@ -2,8 +2,6 @@ FROM debian:buster
 
 WORKDIR /var/www/html/wordpress
 
-# RUN rm -rf *
-
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y curl mariadb-client sendmail
 
 RUN mkdir -p /var/run/php
